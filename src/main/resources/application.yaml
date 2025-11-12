@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: Apemigos-Backend
+
+  liquibase:
+    changeLog: classpath:db/db.changelog-master.yml
+
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USER}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+      pool-name: HikariCP
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        temp:
+          use_jdbc_metadata_defaults: false
+        connection:
+          provider_disables_autocommit: false
+
+springdoc:
+  swagger-ui:
+    doc-expansion: none
+    tagsSorter: alpha
+    display-request-duration: true
+    csrf:
+      enabled: true
+    show-extensions: true
+    show-common-extensions: true
+  show-actuator: true
+  writer-with-default-pretty-printer: true
+  api-docs:
+    groups:
+      enabled: true
