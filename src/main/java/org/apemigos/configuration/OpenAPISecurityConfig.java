@@ -1,26 +1,31 @@
-package org.apemigos.configuration.swagger;
+package org.apemigos.configuration;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.List;
+
 @Configuration
 public class OpenAPISecurityConfig {
 
     @Value("${spring.application.name:Apemigos Backend}")
-    String appName;
+    private String appName;
 
     @Value("${spring.application.description:API para gerenciamento da plataforma Apemigos}")
-    String appDescription;
+    private String appDescription;
 
     @Value("${spring.application.version:1.0.0}")
-    String appVersion;
+    private String appVersion;
 
     @Bean
     public OpenAPI openAPI() {
@@ -31,8 +36,10 @@ public class OpenAPISecurityConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
+                                        .description("Insira o token JWT no formato: Bearer {token}")
                         )
                 )
+                .addSecurityItem(new SecurityRequirement().addList("bearer-key"))
                 .info(new Info()
                         .title(appName)
                         .description(appDescription)
@@ -47,6 +54,10 @@ public class OpenAPISecurityConfig {
                                 .url("https://www.apache.org/licenses/LICENSE-2.0.html")
                         )
                         .termsOfService("https://apemigos.org/terms")
+                        .extensions(Map.of(
+                                "x-api-version", "1.0",
+                                "x-supported-languages", List.of("pt-BR", "en")
+                        ))
                 );
     }
 }

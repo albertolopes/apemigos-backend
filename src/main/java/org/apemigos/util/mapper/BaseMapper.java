@@ -1,4 +1,4 @@
-package org.apemigos.share.mapper;
+package org.apemigos.util.mapper;
 
 import java.util.List;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package org.apemigos.exception;
+package org.apemigos.exceptions;
 
 public class ObjectAlreadyExistsException extends RuntimeException {
 
