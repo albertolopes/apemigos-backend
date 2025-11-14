@@ -1,6 +1,6 @@
 package org.apemigos.usuarios.repository;
 
-import org.apemigos.usuarios.entity.User;
+import org.apemigos.usuarios.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,53 +10,38 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    
-    // Buscar usuário por email
-    Optional<User> findByEmail(String email);
-    
-    // Buscar usuário por email que esteja ativo
-    Optional<User> findByEmailAndIsActiveTrue(String email);
-    
-    // Verificar se email existe
+public interface UserRepository extends JpaRepository<Usuario, Long> {
+
+    Optional<Usuario> findByEmail(String email);
+
+    Optional<Usuario> findByEmailAndIsActiveTrue(String email);
+
     Boolean existsByEmail(String email);
-    
-    // Buscar todos os usuários ativos
-    List<User> findByIsActiveTrue();
-    
-    // Buscar usuários por role
-    List<User> findByRole(User.UserRole role);
-    
-    // Buscar usuários ativos por role
-    List<User> findByRoleAndIsActiveTrue(User.UserRole role);
-    
-    // Buscar usuário por ID que esteja ativo
-    Optional<User> findByIdAndIsActiveTrue(Long id);
-    
-    // Buscar usuários por nome (case insensitive)
-    List<User> findByNameContainingIgnoreCase(String name);
-    
-    // Buscar usuários ativos por nome (case insensitive)
-    List<User> findByNameContainingIgnoreCaseAndIsActiveTrue(String name);
-    
-    // Buscar usuários com paginação (exemplo com query customizada)
-    @Query("SELECT u FROM User u WHERE u.isActive = true ORDER BY u.createdAt DESC")
-    List<User> findAllActiveUsers();
-    
-    // Contar usuários ativos
+
+    List<Usuario> findByIsActiveTrue();
+
+    List<Usuario> findByRole(Usuario.UserRole role);
+
+    List<Usuario> findByRoleAndIsActiveTrue(Usuario.UserRole role);
+
+    Optional<Usuario> findByIdAndIsActiveTrue(Long id);
+
+    List<Usuario> findByNomeContainingIgnoreCase(String nome);
+
+    List<Usuario> findByNomeContainingIgnoreCaseAndIsActiveTrue(String nome);
+
+    @Query("SELECT u FROM Usuario u WHERE u.isActive = true ORDER BY u.createdAt DESC")
+    List<Usuario> findAllActiveUsers();
+
     Long countByIsActiveTrue();
-    
-    // Contar usuários por role
-    Long countByRoleAndIsActiveTrue(User.UserRole role);
-    
-    // Buscar usuários criados após uma data específica
-    List<User> findByCreatedAtAfterAndIsActiveTrue(java.time.LocalDateTime date);
-    
-    // Buscar usuário por email com query customizada
-    @Query("SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:email) AND u.isActive = true")
-    Optional<User> findActiveUserByEmailIgnoreCase(@Param("email") String email);
-    
-    // Verificar se existe usuário com email diferente do ID especificado (para update)
-    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.email = :email AND u.id != :id")
+
+    Long countByRoleAndIsActiveTrue(Usuario.UserRole role);
+
+    List<Usuario> findByCreatedAtAfterAndIsActiveTrue(java.time.LocalDateTime date);
+
+    @Query("SELECT u FROM Usuario u WHERE LOWER(u.email) = LOWER(:email) AND u.isActive = true")
+    Optional<Usuario> findActiveUserByEmailIgnoreCase(@Param("email") String email);
+
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM Usuario u WHERE u.email = :email AND u.id != :id")
     Boolean existsByEmailAndIdNot(@Param("email") String email, @Param("id") Long id);
 }

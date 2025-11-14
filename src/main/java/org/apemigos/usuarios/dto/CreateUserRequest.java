@@ -4,14 +4,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.apemigos.usuarios.entity.User;
+import org.apemigos.usuarios.entity.Usuario;
 
 @Data
 public class CreateUserRequest {
     
     @NotBlank
     @Size(min = 2, max = 100)
-    private String name;
+    private String nome;
     
     @Email
     @NotBlank
@@ -19,7 +19,7 @@ public class CreateUserRequest {
     
     @NotBlank
     @Size(min = 6)
-    private String password;
+    private String senha;
     
-    private User.UserRole role;
+    private Usuario.UserRole role;
 }

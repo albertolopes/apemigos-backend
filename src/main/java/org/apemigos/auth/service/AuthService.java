@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apemigos.auth.dto.JwtResponse;
 import org.apemigos.auth.dto.LoginRequest;
 import org.apemigos.configuration.JwtProperties;
-import org.apemigos.usuarios.entity.User;
+import org.apemigos.usuarios.entity.Usuario;
 import org.apemigos.usuarios.repository.UserRepository;
 import org.apemigos.auth.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -79,14 +79,14 @@ public class AuthService {
         String password = request.getPassword();
 
         try {
-            User user = userRepository.findByEmailAndIsActiveTrue(email)
+            Usuario user = userRepository.findByEmailAndIsActiveTrue(email)
                     .orElseThrow(() -> {
                         log.warn("Tentativa de login com email não encontrado: {}", email);
                         return new SecurityException("Credenciais inválidas");
                     });
 
             // Verificação de senha com timing constante
-            if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            if (!passwordEncoder.matches(password, user.getSenhaHash())) {
                 log.warn("Tentativa de login com senha inválida para usuário: {}", email);
                 throw new SecurityException("Credenciais inválidas");
             }

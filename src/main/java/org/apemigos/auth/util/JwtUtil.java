@@ -6,7 +6,7 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apemigos.configuration.JwtProperties;
-import org.apemigos.usuarios.entity.User;
+import org.apemigos.usuarios.entity.Usuario;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -56,7 +56,7 @@ public class JwtUtil {
                     .claim("isService", true)
                     .claim("email", "service@apemigos.org")
                     .claim("name", "Service Account")
-                    .claim("role", User.UserRole.SERVICE.name())
+                    .claim("role", Usuario.UserRole.SERVICE.name())
                     .claim("iss", jwtProperties.getIssuer()) // Issuer
                     .claim("aud", "apemigos-api") // Audience
                     .setIssuedAt(Date.from(now))
@@ -73,7 +73,7 @@ public class JwtUtil {
     /**
      * Gera token de usuário seguro
      */
-    public String generateSecureUserToken(User user) {
+    public String generateSecureUserToken(Usuario user) {
         try {
             Instant now = Instant.now();
             Instant expiration = now.plusMillis(jwtProperties.getExpirationMs());
@@ -82,7 +82,7 @@ public class JwtUtil {
                     .setId(UUID.randomUUID().toString()) // JTI único
                     .setSubject(user.getEmail())
                     .claim("id", user.getId())
-                    .claim("name", user.getName())
+                    .claim("name", user.getNome())
                     .claim("role", user.getRole().name())
                     .claim("type", "user")
                     .claim("isService", false)

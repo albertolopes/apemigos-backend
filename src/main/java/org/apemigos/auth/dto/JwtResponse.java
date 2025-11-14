@@ -1,6 +1,6 @@
 package org.apemigos.auth.dto;
 
-import org.apemigos.usuarios.entity.User;
+import org.apemigos.usuarios.entity.Usuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,23 +28,23 @@ public class JwtResponse {
     private String name;
 
     @Schema(description = "Role do usuário ou serviço", example = "USER")
-    private User.UserRole role;
+    private Usuario.UserRole role;
 
     @Schema(description = "Indica se é um token de serviço", example = "false")
     private boolean isService;
 
     // Construtor para usuário normal
-    public JwtResponse(String token, User user) {
+    public JwtResponse(String token, Usuario user) {
         this.token = token;
         this.id = user.getId();
         this.email = user.getEmail();
-        this.name = user.getName();
+        this.name = user.getNome();
         this.role = user.getRole();
         this.isService = false;
     }
 
     // Construtor para usuário normal com todos os campos
-    public JwtResponse(String token, Long id, String email, String name, User.UserRole role) {
+    public JwtResponse(String token, Long id, String email, String name, Usuario.UserRole role) {
         this.token = token;
         this.id = id;
         this.email = email;
@@ -60,13 +60,13 @@ public class JwtResponse {
         response.setId(null);
         response.setEmail(email);
         response.setName(name);
-        response.setRole(User.UserRole.SERVICE);
+        response.setRole(Usuario.UserRole.SERVICE);
         response.setService(true);
         return response;
     }
 
     // Construtor para serviço com role customizada
-    public static JwtResponse forService(String token, String email, String name, User.UserRole role) {
+    public static JwtResponse forService(String token, String email, String name, Usuario.UserRole role) {
         JwtResponse response = new JwtResponse();
         response.setToken(token);
         response.setId(null);

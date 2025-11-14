@@ -13,27 +13,27 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "usuario")
+public class Usuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
-    private String name;
+    @Column(name = "nome", nullable = false, length = 100)
+    private String nome;
 
     @Column(name = "email", unique = true, nullable = false, length = 255)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
+    @Column(name = "senhaHash", nullable = false, length = 255)
+    private String senhaHash;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
     @Builder.Default
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.USUARIO;
 
     @Column(name = "is_active", nullable = false)
     @Builder.Default
@@ -48,6 +48,6 @@ public class User {
     private LocalDateTime updatedAt;
 
     public enum UserRole {
-        USER, ADMIN, SERVICE
+        USUARIO, ADMIN, SERVICE
     }
 }
