@@ -1,6 +1,15 @@
 spring:
   application:
     name: Apemigos-Backend
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
 
   liquibase:
     changeLog: classpath:db/db.changelog-master.yml
@@ -43,6 +52,15 @@ jwt:
   issuer: ${JWT_ISSUER:apemigos-auth-server}
   token-prefix: "Bearer "
   header: "Authorization"
+security:
+  allowed:
+    ips: "127.0.0.1,0:0:0:0:0:0:0:1,::1,192.168.1.100,10.0.0.0/24"
+    # 🔧 IPs permitidos:
+    # - 127.0.0.1 → Localhost IPv4
+    # - 0:0:0:0:0:0:0:1 → Localhost IPv6
+    # - ::1 → Localhost IPv6 (alternativo)
+    # - 192.168.1.100 → IP específico
+    # - 10.0.0.0/24 → Rede inteira (CIDR)
 
 logging:
   level:
@@ -72,8 +90,3 @@ springdoc:
   default-produces-media-type: application/json
   paths-to-match:
     - /api/**
-
-server:
-  port: ${SERVER_PORT:8080}
-  servlet:
-    context-path: /
