@@ -39,6 +39,25 @@ spring:
         connection:
           provider_disables_autocommit: false
 
+  mail:
+    host: smtp.zoho.com
+    port: 587
+    username: ${EMAIL_ENDERECO}
+    password: ${EMAIL_SENHA}
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+        debug: true
+
 jwt:
   secret: ${JWT_SECRET:mySuperSecretKeyForJWTGeneration2024ApemigosProjectSecureKeyWithMinimum64CharactersLengthNow123!}
   expiration-ms: ${JWT_EXPIRATION_MS:86400000}           # 24 horas padrão
@@ -50,7 +69,7 @@ jwt:
 security:
   allowed:
     ips: "127.0.0.1,0:0:0:0:0:0:0:1,::1,192.168.1.100,10.0.0.0/24"
-    # 🔧 IPs permitidos:
+    # IPs permitidos:
     # - 127.0.0.1 → Localhost IPv4
     # - 0:0:0:0:0:0:0:1 → Localhost IPv6
     # - ::1 → Localhost IPv6 (alternativo)

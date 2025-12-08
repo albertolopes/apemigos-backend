@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.List;
 
@@ -30,6 +29,7 @@ public class OpenAPISecurityConfig {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .openapi("3.0.3")
                 .components(new Components()
                         .addSecuritySchemes("bearer-key",
                                 new SecurityScheme()
