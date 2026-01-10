@@ -1,7 +1,7 @@
 package org.apemigos.noticias.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apemigos.exception.ObjectNotFoundException;
+import org.apemigos.exceptions.ObjectNotFoundException;
 import org.apemigos.noticias.dto.NoticiaConteudoDTO;
 import org.apemigos.noticias.entity.Noticia;
 import org.apemigos.noticias.entity.NoticiaConteudo;

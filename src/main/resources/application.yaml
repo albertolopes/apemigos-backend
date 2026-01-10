@@ -1,6 +1,10 @@
 spring:
   application:
     name: Apemigos-Backend
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   liquibase:
     changeLog: classpath:db/db.changelog-master.yml
@@ -35,17 +39,77 @@ spring:
         connection:
           provider_disables_autocommit: false
 
+  mail:
+    host: smtp.zoho.com
+    port: 587
+    username: '55-61981181419.527@zohomail.com'
+    password: '-TiNFbC8@'
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+        debug: true
+
+jwt:
+  secret: ${JWT_SECRET:mySuperSecretKeyForJWTGeneration2024ApemigosProjectSecureKeyWithMinimum64CharactersLengthNow123!}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}           # 24 horas padrão
+  service-expiration-ms: ${JWT_SERVICE_EXPIRATION_MS:3600000}  # 1 hora padrão
+  service-key: ${JWT_SERVICE_KEY:apemigos-service-key-2024-secure-version}
+  issuer: ${JWT_ISSUER:apemigos-auth-server}
+  token-prefix: "Bearer "
+  header: "Authorization"
+security:
+  allowed:
+      ips: ${IPS_PERMITIDOS:127.0.0.1,0:0:0:0:0:0:0:1,::1,192.168.1.100,10.0.0.0/24}
+    # IPs permitidos:
+    # - 127.0.0.1 → Localhost IPv4
+    # - 0:0:0:0:0:0:0:1 → Localhost IPv6
+    # - ::1 → Localhost IPv6 (alternativo)
+    # - 192.168.1.100 → IP específico
+    # - 10.0.0.0/24 → Rede inteira (CIDR)
+
+logging:
+  level:
+    org.apemigos.auth.service: DEBUG
+
 springdoc:
   swagger-ui:
+    path: /swagger-ui.html
     doc-expansion: none
-    tagsSorter: alpha
+    tags-sorter: alpha
+    operations-sorter: alpha
     display-request-duration: true
     csrf:
       enabled: true
     show-extensions: true
     show-common-extensions: true
-  show-actuator: true
-  writer-with-default-pretty-printer: true
+    urls:
+      - url: /v3/api-docs
+        name: API Apemigos
   api-docs:
+    path: /v3/api-docs
     groups:
       enabled: true
+  show-actuator: true
+  writer-with-default-pretty-printer: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /api/**
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+
+integracao:
+  cloudinary:
+    url: ${CLOUDINARY_URL}

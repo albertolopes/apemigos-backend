@@ -3,7 +3,7 @@ package org.apemigos.noticias.mapper;
 
 import org.apemigos.noticias.dto.NoticiaConteudoDTO;
 import org.apemigos.noticias.entity.NoticiaConteudo;
-import org.apemigos.share.mapper.BaseMapper;
+import org.apemigos.util.mapper.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

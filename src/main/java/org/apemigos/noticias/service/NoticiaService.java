@@ -1,7 +1,7 @@
 package org.apemigos.noticias.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apemigos.exception.ObjectNotFoundException;
+import org.apemigos.exceptions.ObjectNotFoundException;
 import org.apemigos.noticias.dto.NoticiaDTO;
 import org.apemigos.noticias.entity.Noticia;
 import org.apemigos.noticias.mapper.NoticiaMapper;
@@ -21,26 +21,26 @@ public class NoticiaService {
         Page<Noticia> noticias = noticiaRepository.findAllByOrderByDateDesc(pageable);
         return noticias.map(noticiaMapper::toDto);
     }
-    
+
     public Page<NoticiaDTO> findByKeyword(String keyword, Pageable pageable) {
         Page<Noticia> noticias = noticiaRepository.findByKeyword(keyword, pageable);
         return noticias.map(noticiaMapper::toDto);
     }
-    
+
     public NoticiaDTO findById(Long id) {
         return noticiaMapper.toDto(
                 noticiaRepository.findById(id)
                         .orElseThrow(() -> new ObjectNotFoundException("Noticia não encontrada"))
         );
     }
-    
+
     public NoticiaDTO findBySlug(String slug) {
         return noticiaMapper.toDto(
-                noticiaRepository.findBySlug(slug)
+                noticiaRepository.findBySlugIgnoreCase(slug)
                         .orElseThrow(() -> new ObjectNotFoundException("Noticia não encontrada"))
         );
     }
-    
+
     public NoticiaDTO save(NoticiaDTO noticia) {
         return noticiaMapper.toDto(
                         noticiaRepository.save(
@@ -50,7 +50,7 @@ public class NoticiaService {
                         )
                 );
     }
-    
+
     public NoticiaDTO update(NoticiaDTO noticiaDetails) {
         return noticiaMapper.toDto(
                 noticiaRepository.findById(noticiaDetails.getId())
@@ -66,7 +66,7 @@ public class NoticiaService {
         );
 
     }
-    
+
     public boolean delete(Long id) {
         if (noticiaRepository.existsById(id)) {
             noticiaRepository.deleteById(id);

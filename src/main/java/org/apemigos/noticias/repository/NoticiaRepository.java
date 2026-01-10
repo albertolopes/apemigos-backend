@@ -21,5 +21,8 @@ public interface NoticiaRepository extends JpaRepository<Noticia, Long> {
 
     Optional<Noticia> findBySlug(String slug);
 
+    // Busca case-insensitive - útil quando o usuário envia o slug sem garantir case
+    Optional<Noticia> findBySlugIgnoreCase(String slug);
+
     Page<Noticia> findAllByOrderByDateDesc(Pageable pageable);
 }
