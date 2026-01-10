@@ -42,8 +42,8 @@ spring:
   mail:
     host: smtp.zoho.com
     port: 587
-    username: ${EMAIL_ENDERECO}
-    password: ${EMAIL_SENHA}
+    username: '55-61981181419.527@zohomail.com'
+    password: '-TiNFbC8@'
     protocol: smtp
     default-encoding: UTF-8
     properties:
@@ -68,7 +68,7 @@ jwt:
   header: "Authorization"
 security:
   allowed:
-    ips: "127.0.0.1,0:0:0:0:0:0:0:1,::1,192.168.1.100,10.0.0.0/24"
+      ips: ${IPS_PERMITIDOS:127.0.0.1,0:0:0:0:0:0:0:1,::1,192.168.1.100,10.0.0.0/24}
     # IPs permitidos:
     # - 127.0.0.1 → Localhost IPv4
     # - 0:0:0:0:0:0:0:1 → Localhost IPv6
