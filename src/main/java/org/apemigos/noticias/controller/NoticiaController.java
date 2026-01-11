@@ -2,6 +2,7 @@ package org.apemigos.noticias.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,8 +63,9 @@ public class NoticiaController {
     })
     @GetMapping("/search")
     public ResponseEntity<Page<NoticiaDTO>> searchNoticias(
-            @Parameter(description = "Palavra-chave para busca", required = true, example = "esclerose")
-            @RequestParam String keyword,
+            @Parameter(in = ParameterIn.QUERY, description = "Palavra-chave para busca", required = false, allowEmptyValue = true,
+                    schema = @Schema(type = "string", nullable = true), example = "esclerose")
+            @RequestParam(name = "keyword", required = false) String keyword,
 
             @Parameter(description = "Número da página (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,

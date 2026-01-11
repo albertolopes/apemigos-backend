@@ -13,10 +13,10 @@ import java.util.Optional;
 @Repository
 public interface NoticiaRepository extends JpaRepository<Noticia, Long> {
 
-    @Query("SELECT n FROM Noticia n WHERE " +
-           "LOWER(n.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(n.shortDescription) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-           "LOWER(n.slug) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    @Query(value = "SELECT n.* FROM noticia n WHERE (:keyword IS NULL OR LOWER(n.title) LIKE '%' || LOWER(CAST(:keyword AS text)) || '%' OR LOWER(n.short_description) LIKE '%' || LOWER(CAST(:keyword AS text)) || '%' OR LOWER(n.slug) LIKE '%' || LOWER(CAST(:keyword AS text)) || '%')",
+           countQuery = "SELECT count(*) FROM noticia n WHERE (:keyword IS NULL OR LOWER(n.title) LIKE '%' || LOWER(CAST(:keyword AS text)) || '%' OR LOWER(n.short_description) LIKE '%' || LOWER(CAST(:keyword AS text)) || '%' OR LOWER(n.slug) LIKE '%' || LOWER(CAST(:keyword AS text)) || '%')",
+           nativeQuery = true
+    )
     Page<Noticia> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     Optional<Noticia> findBySlug(String slug);
