@@ -127,3 +127,9 @@ integracao:
 default:
   email:
     to: ${DEFAULT_EMAIL_TO}
+
+pix:
+  default:
+    key: ${PIX_KEY}
+    merchant-name: ${PIX_MERCHANT_NAME}
+    merchant-city: ${PIX_MERCHANT_CITY}
