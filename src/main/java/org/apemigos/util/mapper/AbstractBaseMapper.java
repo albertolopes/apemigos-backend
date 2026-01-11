@@ -3,7 +3,7 @@ package org.apemigos.util.mapper;
 import java.util.List;
 import java.util.Set;
 
-public interface BaseMapper<E, D> {
+public interface AbstractBaseMapper<E, D> {
 
     D toDto(E entity);
 
@@ -13,7 +13,8 @@ public interface BaseMapper<E, D> {
 
     List<E> toEntity(List<D> dtos);
 
-    Set<D> toDto(Set<E> entities);
+    Set<E> toDto(Set<E> entities);
 
     Set<E> toEntity(Set<D> dtos);
+
 }
