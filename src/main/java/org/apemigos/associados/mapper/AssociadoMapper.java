@@ -21,6 +21,7 @@ public abstract class AssociadoMapper implements BaseMapper<Associado, Associado
                 .rg(dto.getRg())
                 .email(dto.getEmail())
                 .telefoneContato(dto.getTelefoneContato())
+                .nomeContatoEmergencia(dto.getNomeContatoEmergencia())
                 .telefoneEmergencia(dto.getTelefoneEmergencia())
                 .medicoResponsavel(dto.getMedicoResponsavel())
                 .telefoneMedico(dto.getTelefoneMedico())
@@ -37,7 +38,7 @@ public abstract class AssociadoMapper implements BaseMapper<Associado, Associado
         if (associado.getFiles() == null)
             associado.setFiles(new ArrayList<>());
 
-
+        associado.setPossuiConvenio(dto.getConvenioNome() != null && !dto.getConvenioNome().isBlank());
         return associado;
     }
 }

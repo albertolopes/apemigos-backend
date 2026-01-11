@@ -45,6 +45,9 @@ public class AssociadoRequisicaoDTO {
     @Schema(description = "Telefone de emergência", example = "(61) 98888-8888")
     private String telefoneEmergencia;
 
+    @Schema(description = "Nome do contato de emergência", example = "João Silva")
+    private String nomeContatoEmergencia;
+
     @Schema(description = "Médico responsável", example = "Dr. João")
     private String medicoResponsavel;
 

@@ -30,6 +30,7 @@ public class Associado {
     private String email;
     private String telefoneContato;
     private String telefoneEmergencia;
+    private String nomeContatoEmergencia;
     private String medicoResponsavel;
     private String telefoneMedico;
     private Boolean possuiConvenio;

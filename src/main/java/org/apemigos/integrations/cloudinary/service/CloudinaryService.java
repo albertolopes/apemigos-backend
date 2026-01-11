@@ -334,7 +334,9 @@ public class CloudinaryService {
             if ("application/pdf".equalsIgnoreCase(contentType) || (file.getOriginalFilename() != null && file.getOriginalFilename().toLowerCase().endsWith(".pdf"))) {
                 long originalSize = file.getSize();
                 log.info("Processing PDF upload: name='{}' contentType='{}' originalSize={}", file.getOriginalFilename(), contentType, formatFileSize(originalSize));
-                byte[] optimized = optimizePdf(file);
+                // IMPORTANT: read bytes immediately to avoid Tomcat removing the temporary uploaded file
+                byte[] originalBytes = file.getBytes();
+                byte[] optimized = optimizePdf(originalBytes, file.getOriginalFilename());
 
                 if (optimized == null || optimized.length == 0) {
                     return CloudinaryUploadDTO.builder().success(false).message("Falha ao otimizar PDF").build();
@@ -346,7 +348,7 @@ public class CloudinaryService {
                 // If optimization did not reduce size and original was large, try a stronger pass
                 if (optimizedSize >= originalSize && originalSize > MIN_SIZE_FOR_OPTIMIZATION) {
                     log.warn("Otimização inicial não reduziu o PDF ({}). Tentando otimização forte adicional.", file.getOriginalFilename());
-                    byte[] strongAgain = optimizePdfStrong(file, 0.45f, 800);
+                    byte[] strongAgain = optimizePdfStrong(originalBytes, 0.45f, 800, file.getOriginalFilename());
                     if (strongAgain != null && strongAgain.length > 0 && strongAgain.length < optimizedSize) {
                         optimized = strongAgain;
                         optimizedSize = optimized.length;
@@ -508,15 +510,15 @@ public class CloudinaryService {
      * e re-escreve o PDF — pode reduzir tamanho, mas para compressões fortes é necessário
      * re-encodar imagens (essa versão forte tenta re-encodar imagens internas em JPEG com qualidade reduzida).
      */
-    private byte[] optimizePdf(MultipartFile file) throws IOException {
+    private byte[] optimizePdf(byte[] fileBytes, String originalFilename) throws IOException {
         // Tentativa forte primeiro: re-encodar imagens internas
-        byte[] strong = optimizePdfStrong(file, 0.6f, 1200);
-        if (strong != null && strong.length > 0 && strong.length < file.getBytes().length) {
+        byte[] strong = optimizePdfStrong(fileBytes, 0.6f, 1200, originalFilename);
+        if (strong != null && strong.length > 0 && strong.length < fileBytes.length) {
             return strong;
         }
 
         // Fallback leve (re-save, remove metadados)
-        try (PDDocument document = PDDocument.load(file.getInputStream());
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(fileBytes));
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             if (document.getDocumentInformation() != null) {
@@ -532,11 +534,11 @@ public class CloudinaryService {
             document.save(out);
             byte[] leveled = out.toByteArray();
             // Se fallback não reduziu, devolve original
-            if (leveled.length < file.getBytes().length) return leveled;
-            return file.getBytes();
+            if (leveled.length < fileBytes.length) return leveled;
+            return fileBytes;
         } catch (Exception e) {
             log.warn("Falha na otimização leve de PDF, retornando original: {}", e.getMessage());
-            return file.getBytes();
+            return fileBytes;
         }
     }
 
@@ -544,15 +546,15 @@ public class CloudinaryService {
      * Otimização forte: re-encoda imagens embutidas em JPEG com qualidade `jpegQuality` e limita largura a `maxImageWidth`.
      * Retorna bytes do PDF otimizado (ou null em caso de falha).
      */
-    private byte[] optimizePdfStrong(MultipartFile file, float jpegQuality, int maxImageWidth) {
-        try (PDDocument document = PDDocument.load(file.getInputStream());
+    private byte[] optimizePdfStrong(byte[] fileBytes, float jpegQuality, int maxImageWidth, String originalFilename) {
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(fileBytes));
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            int replacedCount = 0;
-            long totalBeforeImages = 0L;
-            long totalAfterImages = 0L;
+             int replacedCount = 0;
+             long totalBeforeImages = 0L;
+             long totalAfterImages = 0L;
 
-            for (var page : document.getPages()) {
+             for (var page : document.getPages()) {
                 var resources = page.getResources();
                 if (resources == null) continue;
 
@@ -702,8 +704,8 @@ public class CloudinaryService {
         } catch (Exception e) {
             log.warn("Falha na otimização forte de PDF: {}", e.getMessage());
             try {
-                return file.getBytes();
-            } catch (IOException io) {
+                return fileBytes;
+            } catch (Exception io) {
                 return null;
             }
         }
