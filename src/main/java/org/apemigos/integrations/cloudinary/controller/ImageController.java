@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apemigos.integrations.cloudinary.dto.CloudinaryUploadDTO;
 import org.apemigos.integrations.cloudinary.service.CloudinaryService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +34,14 @@ public class ImageController {
             @ApiResponse(responseCode = "400", description = "Arquivo inválido ou muito grande"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
-    public ResponseEntity<?> uploadImage(
+    public ResponseEntity<CloudinaryUploadDTO> uploadImage(
             @Parameter(description = "Arquivo de imagem", required = true)
             MultipartFile file,
 
             @Parameter(description = "Pasta de destino no Cloudinary", example = "noticias")
             @RequestParam(value = "folder", defaultValue = "noticias") String folder) {
 
-        return ResponseEntity.ok(cloudinaryService.uploadImage(file, folder));
+        return ResponseEntity.ok(cloudinaryService.uploadImagem(file, folder));
     }
 
     @PostMapping("/upload-from-url")
@@ -53,7 +54,7 @@ public class ImageController {
             @ApiResponse(responseCode = "400", description = "URL inválida"),
             @ApiResponse(responseCode = "500", description = "Erro interno no servidor")
     })
-    public ResponseEntity<?> uploadImageFromUrl(
+    public ResponseEntity<CloudinaryUploadDTO> uploadImageFromUrl(
             @Parameter(description = "URL da imagem", required = true, example = "https://exemplo.com/imagem.jpg")
             @RequestParam("url") String imageUrl,
 

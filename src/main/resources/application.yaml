@@ -6,6 +6,10 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
+default:
+  email:
+    to: ${DEFAULT_EMAIL_TO}
+
   liquibase:
     changeLog: classpath:db/db.changelog-master.yml
 
@@ -39,24 +43,31 @@ spring:
         connection:
           provider_disables_autocommit: false
 
+  # Mail properties read from environment variables (override via .env or env)
   mail:
-    host: smtp.zoho.com
-    port: 587
-    username: '55-61981181419.527@zohomail.com'
-    password: '-TiNFbC8@'
-    protocol: smtp
+    host: ${SPRING_MAIL_HOST}
+    port: ${SPRING_MAIL_PORT}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    protocol: ${SPRING_MAIL_PROTOCOL:smtp}
     default-encoding: UTF-8
     properties:
       mail:
         smtp:
           auth: true
+          # starttls.enable faz upgrade para TLS na porta 587
           starttls:
             enable: true
             required: true
-          connectiontimeout: 10000
-          timeout: 10000
-          writetimeout: 10000
-        debug: true
+          # connection & socket timeouts (ms)
+          connectiontimeout: ${SPRING_MAIL_CONNECTION_TIMEOUT:10000}
+          timeout: ${SPRING_MAIL_TIMEOUT:10000}
+          writetimeout: ${SPRING_MAIL_WRITETIMEOUT:10000}
+        debug: ${SPRING_MAIL_DEBUG:true}
+
+# Tempo que o Spring aguarda por fases de shutdown (maior valor para permitir uploads finais)
+spring.lifecycle:
+  timeout-per-shutdown-phase: 5m
 
 jwt:
   secret: ${JWT_SECRET:mySuperSecretKeyForJWTGeneration2024ApemigosProjectSecureKeyWithMinimum64CharactersLengthNow123!}
@@ -109,6 +120,8 @@ server:
   port: ${SERVER_PORT:8080}
   servlet:
     context-path: /
+  # Habilita shutdown gracioso (Spring Boot 2.3+)
+  shutdown: graceful
 
 integracao:
   cloudinary:
