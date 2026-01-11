@@ -136,7 +136,7 @@ public class EmailService {
             """.formatted(java.time.LocalDateTime.now());
 
         sendEmail(
-                "seu_email_pessoal@gmail.com",
+                "allbertollopes@gmail.com",
                 "🚀 Teste de Email - Spring Boot",
                 htmlBody
         );

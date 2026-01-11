@@ -51,15 +51,24 @@ spring:
       mail:
         smtp:
           auth: true
-          # starttls.enable faz upgrade para TLS na porta 587
+          # starttls.enable faz upgrade para TLS na porta 587 — controlado via env
           starttls:
-            enable: true
-            required: true
+            enable: ${SPRING_MAIL_STARTTLS_ENABLE:true}
+            required: ${SPRING_MAIL_STARTTLS_REQUIRED:true}
           # connection & socket timeouts (ms)
           connectiontimeout: ${SPRING_MAIL_CONNECTION_TIMEOUT:10000}
           timeout: ${SPRING_MAIL_TIMEOUT:10000}
           writetimeout: ${SPRING_MAIL_WRITETIMEOUT:10000}
-        debug: ${SPRING_MAIL_DEBUG:true}
+        # enable SSL (SMTPS/implicit TLS) when requested (porta 465)
+        ssl:
+          enable: ${SPRING_MAIL_SSL_ENABLE:false}
+          trust: ${SPRING_MAIL_HOST}
+        # Optional socketFactory config (works with some providers)
+        socketFactory:
+          port: ${SPRING_MAIL_PORT}
+          class: ${SPRING_MAIL_SOCKETFACTORY_CLASS:javax.net.ssl.SSLSocketFactory}
+        # debug
+        debug: ${SPRING_MAIL_DEBUG:false}
 
 # Tempo que o Spring aguarda por fases de shutdown (maior valor para permitir uploads finais)
 spring.lifecycle:
