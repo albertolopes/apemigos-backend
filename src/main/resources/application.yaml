@@ -6,10 +6,6 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 
-default:
-  email:
-    to: ${DEFAULT_EMAIL_TO}
-
   liquibase:
     changeLog: classpath:db/db.changelog-master.yml
 
@@ -126,3 +122,7 @@ server:
 integracao:
   cloudinary:
     url: ${CLOUDINARY_URL}
+
+default:
+  email:
+    to: ${DEFAULT_EMAIL_TO}

@@ -34,7 +34,7 @@ public class AssociadoService {
     private static final String CLOUD_FOLDER = "associados";
     private static final String SUBJECT = "Solicitação de Associação";
 
-    @Value("${default.email.url}")
+    @Value("${default.email.to}")
     private String defaultEmail;
 
     public Associado saveFromMultipart(AssociadoRequisicaoDTO dto) throws RuntimeException {
