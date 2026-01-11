@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +27,13 @@ public class OpenAPISecurityConfig {
     @Value("${spring.application.version:1.0.0}")
     private String appVersion;
 
+    // Optional server URL for swagger UI (set in production to the https url)
+    @Value("${SPRINGDOC_SERVER_URL:}")
+    private String swaggerServerUrl;
+
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI()
+        OpenAPI api = new OpenAPI()
                 .openapi("3.0.3")
                 .components(new Components()
                         .addSecuritySchemes("bearer-key",
@@ -59,5 +64,11 @@ public class OpenAPISecurityConfig {
                                 "x-supported-languages", List.of("pt-BR", "en")
                         ))
                 );
+
+        if (swaggerServerUrl != null && !swaggerServerUrl.isBlank()) {
+            api.setServers(List.of(new Server().url(swaggerServerUrl)));
+        }
+
+        return api;
     }
 }

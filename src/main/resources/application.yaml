@@ -73,15 +73,13 @@ jwt:
   issuer: ${JWT_ISSUER:apemigos-auth-server}
   token-prefix: "Bearer "
   header: "Authorization"
+
+# Segurança: lista de IPs permitidos. Por padrão usa '*' (aceita todos) quando a variável
+# de ambiente IPS_PERMITIDOS não for definida. Em produção recomenda-se setar IPS_PERMITIDOS
+# explicitamente (ex.: IPS_PERMITIDOS=10.0.0.0/8,203.0.113.5)
 security:
   allowed:
-      ips: ${IPS_PERMITIDOS:127.0.0.1,0:0:0:0:0:0:0:1,::1,192.168.1.100,10.0.0.0/24}
-    # IPs permitidos:
-    # - 127.0.0.1 → Localhost IPv4
-    # - 0:0:0:0:0:0:0:1 → Localhost IPv6
-    # - ::1 → Localhost IPv6 (alternativo)
-    # - 192.168.1.100 → IP específico
-    # - 10.0.0.0/24 → Rede inteira (CIDR)
+    ips: ${IPS_PERMITIDOS:*}
 
 logging:
   level:
@@ -118,6 +116,9 @@ server:
     context-path: /
   # Habilita shutdown gracioso (Spring Boot 2.3+)
   shutdown: graceful
+  # Important: when behind proxies (Railway, Heroku, nginx) enable forwarding so app sees
+  # the original client IP and scheme (X-Forwarded-For, X-Forwarded-Proto)
+  forward-headers-strategy: framework
 
 integracao:
   cloudinary:

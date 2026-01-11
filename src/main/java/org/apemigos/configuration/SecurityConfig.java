@@ -2,7 +2,7 @@ package org.apemigos.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.apemigos.auth.service.JwtAuthenticationFilter;
-import org.apemigos.configuration.security.IpWhitelistFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,12 +28,16 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final IpWhitelistFilter ipWhitelistFilter;
+//    private final IpWhitelistFilter ipWhitelistFilter;
+
+    // Optional: FRONTEND_URL, e.g. https://apemigos.vercel.app
+    @Value("${FRONTEND_URL:}")
+    private String frontendUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 🌍 CORS liberado
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // 🌍 CORS configurado
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -50,8 +54,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/service/**").hasRole("SERVICE")
                         .anyRequest().authenticated()
                 )
-                // 🔒 Filtro de IP whitelist (adiciona segurança mesmo com CORS liberado)
-                .addFilterBefore(ipWhitelistFilter, UsernamePasswordAuthenticationFilter.class)
+                // 🔒 Filtro de IP whitelist (adiciona segurança mesmo com CORS configurado)
+//                .addFilterBefore(ipWhitelistFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -61,7 +65,15 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        if (frontendUrl != null && !frontendUrl.isBlank()) {
+            // Allow only the configured frontend origin in production
+            configuration.setAllowedOrigins(List.of(frontendUrl));
+            configuration.setAllowCredentials(true);
+        } else {
+            // Allow all origins via patterns (keeps support for credentials when needed)
+            configuration.setAllowedOriginPatterns(List.of("*"));
+            configuration.setAllowCredentials(true);
+        }
 
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
@@ -86,12 +98,11 @@ public class SecurityConfig {
                 "Access-Control-Allow-Credentials"
         ));
 
-        configuration.setAllowCredentials(true);
-
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        // Register for all endpoints so swagger/v3 endpoints and api routes are covered
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
