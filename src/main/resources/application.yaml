@@ -1,4 +1,8 @@
 spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
   application:
     name: Apemigos-Backend
   servlet:
@@ -39,36 +43,31 @@ spring:
         connection:
           provider_disables_autocommit: false
 
-  # Mail properties read from environment variables (override via .env or env)
-  mail:
-    host: ${SPRING_MAIL_HOST}
-    port: ${SPRING_MAIL_PORT}
-    username: ${SPRING_MAIL_USERNAME}
-    password: ${SPRING_MAIL_PASSWORD}
-    protocol: ${SPRING_MAIL_PROTOCOL:smtp}
-    default-encoding: UTF-8
-    properties:
-      mail:
-        smtp:
-          auth: true
-          # starttls.enable faz upgrade para TLS na porta 587 — controlado via env
-          starttls:
-            enable: ${SPRING_MAIL_STARTTLS_ENABLE:true}
-            required: ${SPRING_MAIL_STARTTLS_REQUIRED:true}
-          # connection & socket timeouts (ms)
-          connectiontimeout: ${SPRING_MAIL_CONNECTION_TIMEOUT:10000}
-          timeout: ${SPRING_MAIL_TIMEOUT:10000}
-          writetimeout: ${SPRING_MAIL_WRITETIMEOUT:10000}
-        # enable SSL (SMTPS/implicit TLS) when requested (porta 465)
-        ssl:
-          enable: ${SPRING_MAIL_SSL_ENABLE:false}
-          trust: ${SPRING_MAIL_HOST}
-        # Optional socketFactory config (works with some providers)
-        socketFactory:
-          port: ${SPRING_MAIL_PORT}
-          class: ${SPRING_MAIL_SOCKETFACTORY_CLASS:javax.net.ssl.SSLSocketFactory}
-        # debug
-        debug: ${SPRING_MAIL_DEBUG:false}
+# Mail (SMTP) configuration - read from environment variables
+spring.mail:
+  host: ${SPRING_MAIL_HOST:}
+  port: ${SPRING_MAIL_PORT:25}
+  username: ${SPRING_MAIL_USERNAME:}
+  password: ${SPRING_MAIL_PASSWORD:}
+  protocol: ${SPRING_MAIL_PROTOCOL:smtp}
+  default-encoding: UTF-8
+  test-connection: ${SPRING_MAIL_TEST_CONNECTION:false}
+  properties.mail.smtp:
+    auth: ${SPRING_MAIL_SMTP_AUTH:true}
+    starttls.enable: ${SPRING_MAIL_STARTTLS_ENABLE:true}
+    starttls.required: ${SPRING_MAIL_STARTTLS_REQUIRED:false}
+    connectiontimeout: ${SPRING_MAIL_CONNECTION_TIMEOUT:20000}
+    timeout: ${SPRING_MAIL_TIMEOUT:20000}
+    writetimeout: ${SPRING_MAIL_WRITETIMEOUT:20000}
+
+# Consolidated Mailgun configuration
+email:
+  provider: ${EMAIL_PROVIDER:mailgun} # values: smtp, mailgun
+  mailgun:
+    api-key: ${MAILGUN_API_KEY:}
+    domain: ${MAILGUN_FROM_EMAIL:}
+    from-name: ${MAILGUN_FROM_NAME:}
+    base-url: ${MAILGUN_BASE_URL:}
 
 # Tempo que o Spring aguarda por fases de shutdown (maior valor para permitir uploads finais)
 spring.lifecycle:
@@ -92,7 +91,10 @@ security:
 
 logging:
   level:
-    org.apemigos.auth.service: DEBUG
+    root: INFO
+    org.apemigos.auth.service: INFO
+    feign: WARN
+    org.springframework.web: WARN
 
 springdoc:
   swagger-ui:
@@ -142,3 +144,10 @@ pix:
     key: ${PIX_KEY}
     merchant-name: ${PIX_MERCHANT_NAME}
     merchant-city: ${PIX_MERCHANT_CITY}
+
+# Configura o cliente Feign para logar tudo (headers + body + metadata)
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL

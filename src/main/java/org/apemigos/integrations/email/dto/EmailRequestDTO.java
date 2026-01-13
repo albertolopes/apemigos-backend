@@ -1,4 +1,4 @@
-package org.apemigos.email.dto;
+package org.apemigos.integrations.email.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

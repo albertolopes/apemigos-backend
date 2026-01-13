@@ -8,10 +8,10 @@ import org.apemigos.associados.entity.AssociadoFile;
 import org.apemigos.associados.mapper.AssociadoMapper;
 import org.apemigos.associados.repository.AssociadoFileRepository;
 import org.apemigos.associados.repository.AssociadoRepository;
-import org.apemigos.email.dto.EmailAttachment;
-import org.apemigos.email.service.EmailService;
 import org.apemigos.integrations.cloudinary.dto.CloudinaryUploadDTO;
 import org.apemigos.integrations.cloudinary.service.CloudinaryService;
+import org.apemigos.integrations.email.dto.AttachmentDTO;
+import org.apemigos.integrations.email.service.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,29 +53,16 @@ public class AssociadoService {
 
         Associado associadoSalvo = associadoRepository.save(associado);
 
-        emailService
-            .sendEmail(
+        try {
+            emailService.sendEmail(
                 defaultEmail,
                 SUBJECT.concat(" - ").concat(associado.getNome() + " " + associado.getSobrenome()),
                 dto.getBodyHtml(),
-                true,
-                null,
-                    arquivos.stream().map(
-                        file ->
-                        {
-                            try {
-                                return new EmailAttachment(
-                                    file.getOriginalFilename(),
-                                    file.getContentType(),
-                                    file.getBytes()
-                                );
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                )
-                .toList()
+                arquivos
             );
+        } catch (Exception e) {
+            log.error("Erro ao enviar email para admin: {}", e.getMessage());
+        }
 
         arquivos.forEach(file ->
             java.util.concurrent.CompletableFuture.runAsync(() -> {
@@ -84,12 +71,17 @@ public class AssociadoService {
 
                     if (uploaded.getUrl() != null) {
                         associadoFileRepository.save(
-                                AssociadoFile.builder()
-                                        .associado(associadoSalvo)
-                                        .cloudPublicId(uploaded.getPublicId())
-                                        .cloudUrl(uploaded.getUrl())
-                                        .cloudFolder(file.getOriginalFilename())
-                                        .build()
+                            AssociadoFile.builder()
+                                .associado(associadoSalvo)
+                                .cloudPublicId(uploaded.getPublicId())
+                                .cloudUrl(uploaded.getUrl())
+                                .cloudFolder(file.getOriginalFilename())
+                                .originalName(file.getOriginalFilename())
+                                .contentType(file.getContentType())
+                                .size(file.getSize())
+                                .cloudSuccess(uploaded.isSuccess())
+                                .cloudMessage(uploaded.getMessage())
+                                .build()
                         );
                     }
                 } catch (Exception e) {
@@ -101,5 +93,3 @@ public class AssociadoService {
         return associadoSalvo;
     }
 }
-
-
