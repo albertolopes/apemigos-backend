@@ -43,14 +43,13 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/webjars/**",
                                 "/swagger-resources/**",
-                                "/configuration/**"
+                                "/configuration/**",
+                                "/actuator/**"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/service/**").hasRole("SERVICE")
                         .anyRequest().authenticated()
                 )
-                // 🔒 Filtro de IP whitelist (adiciona segurança mesmo com CORS configurado)
-//                .addFilterBefore(ipWhitelistFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

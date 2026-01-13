@@ -20,10 +20,10 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       minimum-idle: 10
-      maximum-pool-size: 20
+      maximum-pool-size: 10
       idle-timeout: 30000
       max-lifetime: 1800000
-      connection-timeout: 20000
+      connection-timeout: 300000
       pool-name: HikariCP
 
   jpa:
@@ -160,3 +160,9 @@ feign:
     config:
       default:
         loggerLevel: ERROR
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
