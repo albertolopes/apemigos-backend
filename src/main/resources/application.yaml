@@ -145,9 +145,18 @@ pix:
     merchant-name: ${PIX_MERCHANT_NAME}
     merchant-city: ${PIX_MERCHANT_CITY}
 
-# Configura o cliente Feign para logar tudo (headers + body + metadata)
+frontend:
+  # Lista de frontends permitidos (CSV ou única URL). Ambiente padrão: localhost:3000
+  urls: ${FRONTEND_URLS:http://localhost:3000}
+  # Controla se o filtro de origem exige validação (true = exige; false = permissivo)
+  require-origin-validation: ${REQUIRE_ORIGIN_VALIDATION:true}
+  # Lista de user-agents que são permitidos a ignorar validação de origin (ex.: Postman,Insomnia)
+  allowed-user-agents: ${ALLOWED_USER_AGENTS:}
+  # Se true e existir header Authorization, a requisição será permitida mesmo com Origin ausente/negado
+  allow-if-auth-header: ${ALLOW_IF_AUTH_HEADER:true}
+
 feign:
   client:
     config:
       default:
-        loggerLevel: FULL
+        loggerLevel: ERROR

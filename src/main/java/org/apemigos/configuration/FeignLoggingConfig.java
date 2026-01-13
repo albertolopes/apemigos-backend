@@ -1,4 +1,4 @@
-package org.apemigos.config;
+package org.apemigos.configuration;
 
 import feign.Logger;
 import org.springframework.context.annotation.Bean;

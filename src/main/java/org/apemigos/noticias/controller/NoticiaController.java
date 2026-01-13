@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/noticias")
-@CrossOrigin(origins = "*")
 @Tag(name = "Notícias", description = "Gerenciamento de notícias")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class NoticiaController {
 

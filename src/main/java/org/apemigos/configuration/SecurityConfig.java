@@ -28,11 +28,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-//    private final IpWhitelistFilter ipWhitelistFilter;
-
-    // Optional: FRONTEND_URL, e.g. https://apemigos.vercel.app
-    @Value("${FRONTEND_URL:}")
-    private String frontendUrl;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,15 +60,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        if (frontendUrl != null && !frontendUrl.isBlank()) {
-            // Allow only the configured frontend origin in production
-            configuration.setAllowedOrigins(List.of(frontendUrl));
-            configuration.setAllowCredentials(true);
-        } else {
-            // Allow all origins via patterns (keeps support for credentials when needed)
-            configuration.setAllowedOriginPatterns(List.of("*"));
-            configuration.setAllowCredentials(true);
-        }
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowCredentials(true);
 
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"

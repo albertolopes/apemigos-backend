@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/projetos")
-@CrossOrigin(origins = "*")
 @Tag(name = "Projetos", description = "Gerenciamento de projetos")
 @RequiredArgsConstructor
 public class ProjetoController {
