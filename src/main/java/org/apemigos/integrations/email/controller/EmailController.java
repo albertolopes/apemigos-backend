@@ -27,7 +27,6 @@ public class EmailController {
 
     private final EmailService emailService;
 
-
     @Operation(summary = "Enviar email", description = "Envia um email (HTML permitido). Retorna 204 No Content em sucesso.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Email enviado com sucesso", content = @Content),

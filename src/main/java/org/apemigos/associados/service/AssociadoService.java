@@ -32,7 +32,7 @@ public class AssociadoService {
     private final EmailService emailService;
 
     private static final String CLOUD_FOLDER = "associados";
-    private static final String SUBJECT = "Solicitação de Associação";
+    private static final String SUBJECT = "Novo formulario recebido";
 
     @Value("${default.email.to}")
     private String defaultEmail;
