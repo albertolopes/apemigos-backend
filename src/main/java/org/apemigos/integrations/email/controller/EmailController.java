@@ -28,18 +28,18 @@ public class EmailController {
     private final EmailService emailService;
 
 
-//    @Operation(summary = "Enviar email", description = "Envia um email (HTML permitido). Retorna 204 No Content em sucesso.")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "204", description = "Email enviado com sucesso", content = @Content),
-//            @ApiResponse(responseCode = "400", description = "Dados inválidos no payload", content = @Content),
-//            @ApiResponse(responseCode = "418", description = "Erro de integração com provedor de email", content = @Content),
-//            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
-//    })
-//    @PostMapping
-//    public ResponseEntity<Void> sendEmail(@Valid @RequestBody EmailRequestDTO request) {
-//        emailService.sendEmail(request);
-//        return ResponseEntity.noContent().build();
-//    }
+    @Operation(summary = "Enviar email", description = "Envia um email (HTML permitido). Retorna 204 No Content em sucesso.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Email enviado com sucesso", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos no payload", content = @Content),
+            @ApiResponse(responseCode = "418", description = "Erro de integração com provedor de email", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor", content = @Content)
+    })
+    @PostMapping
+    public ResponseEntity<Void> sendEmail(@Valid @RequestBody EmailRequestDTO request) {
+        emailService.sendEmail(request);
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping("/test")
     public String sendTestEmail() {

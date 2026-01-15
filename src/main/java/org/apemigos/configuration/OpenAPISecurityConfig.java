@@ -36,6 +36,13 @@ public class OpenAPISecurityConfig {
         OpenAPI api = new OpenAPI()
                 .openapi("3.0.3")
                 .components(new Components()
+                        .addSecuritySchemes("X-Service-Token",
+                                new SecurityScheme()
+                                        .type(SecurityScheme.Type.APIKEY)
+                                        .in(SecurityScheme.In.HEADER)
+                                        .name("X-Service-Token")
+                                        .description("Insira o token X-Service-Token no header (X-Service-Token)")
+                        )
                         .addSecuritySchemes("bearer-key",
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
@@ -45,6 +52,7 @@ public class OpenAPISecurityConfig {
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearer-key"))
+                .addSecurityItem(new SecurityRequirement().addList("X-Service-Token"))
                 .info(new Info()
                         .title(appName)
                         .description(appDescription)

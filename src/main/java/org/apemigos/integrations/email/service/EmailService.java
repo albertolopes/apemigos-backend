@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apemigos.integrations.email.client.MailgunClient;
+import org.apemigos.integrations.email.dto.EmailRequestDTO;
 import org.apemigos.integrations.email.dto.EmailResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -25,6 +26,16 @@ public class EmailService {
 
     @Value("${email.mailgun.from-name}")
     private String fromName ;
+
+    @Async
+    public void sendEmail(EmailRequestDTO request){
+        sendEmail(
+                request.getTo(),
+                request.getSubject(),
+                request.getBody(),
+                null
+        );
+    }
 
     @Async
     @SneakyThrows
