@@ -159,7 +159,7 @@ public class NoticiaController {
 
             @Parameter(description = "Dados atualizados da notícia", required = true)
             @RequestBody NoticiaDTO noticiaDetails) {
-        return ResponseEntity.ok(noticiaService.update(noticiaDetails));
+        return ResponseEntity.ok(noticiaService.update(id, noticiaDetails));
     }
 
     @Operation(

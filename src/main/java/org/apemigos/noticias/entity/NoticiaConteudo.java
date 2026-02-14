@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -25,11 +26,15 @@ public class NoticiaConteudo {
     
     @Column(name = "long_description", nullable = false, columnDefinition = "TEXT")
     private String longDescription;
-    
+
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "total_buscas")
+    private Integer totalBuscas;
 
 }

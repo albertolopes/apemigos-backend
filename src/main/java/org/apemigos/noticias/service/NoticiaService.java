@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
+
 @Service
 @RequiredArgsConstructor
 public class NoticiaService {
@@ -42,6 +44,18 @@ public class NoticiaService {
     }
 
     public NoticiaDTO save(NoticiaDTO noticia) {
+        String slug = Normalizer.normalize(noticia.getTitle(), Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .toLowerCase()
+                .trim()
+                .replaceAll("[^a-z0-9\\s]", "")
+                .replaceAll("\\s+", "-");
+
+        if (slug.length() > 10)
+            slug = slug.substring(0, 10);
+
+        noticia.setSlug(slug.replaceAll("-$", ""));
+
         return noticiaMapper.toDto(
                         noticiaRepository.save(
                                 noticiaMapper.toEntity(
@@ -51,9 +65,9 @@ public class NoticiaService {
                 );
     }
 
-    public NoticiaDTO update(NoticiaDTO noticiaDetails) {
+    public NoticiaDTO update(Long id, NoticiaDTO noticiaDetails) {
         return noticiaMapper.toDto(
-                noticiaRepository.findById(noticiaDetails.getId())
+                noticiaRepository.findById(id)
                 .map(noticia -> {
                     noticia.setTitle(noticiaDetails.getTitle());
                     noticia.setShortDescription(noticiaDetails.getShortDescription());

@@ -32,9 +32,6 @@ public class OriginValidationFilter extends OncePerRequestFilter {
     @Value("${ALLOWED_SERVICE_TOKENS:}")
     private String allowedServiceTokensConfig;
 
-    @Value("${REQUIRE_X_SERVICE_TOKEN_FOR_AUTH:true}")
-    private boolean requireXServiceTokenForAuth;
-
     private final AtomicReference<List<String>> allowedServiceTokensRef = new AtomicReference<>();
 
     @Override
@@ -54,12 +51,10 @@ public class OriginValidationFilter extends OncePerRequestFilter {
         }
 
         String origin = request.getHeader("Origin");
-        String referer = request.getHeader("Referer");
         String requestURI = request.getRequestURI();
 
         // Allow documentation/public endpoints without token/origin validation
         if (isPublicEndpoint(requestURI)) {
-            // handle preflight for docs
             if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 if (origin != null && !origin.isBlank()) {
                     setCorsHeadersForOrigin(response, origin);
@@ -74,31 +69,29 @@ public class OriginValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // If Authorization header present and config requires X-Service-Token for auth, enforce token
-        if (requireXServiceTokenForAuth && hasAuthorizationHeader(request)) {
-            if (!isValidServiceToken(request)) {
-                log.warn("Request with Authorization rejected: missing or invalid X-Service-Token (IP={})", getClientIp(request));
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.setContentType("application/json");
-                response.getWriter().write("{\"error\": \"Missing or invalid service token\"}");
-                return;
-            }
-        }
-
-        // Require valid service token for any non-public request
-        if (isValidServiceToken(request)) {
-            // echo CORS for requests coming from browsers (optional)
+        // Allow if a user token is present (will be validated by JwtAuthenticationFilter)
+        // OR if a valid service token is present.
+        if (hasAuthorizationHeader(request) || isValidServiceToken(request)) {
             if (origin != null && !origin.isBlank()) {
                 setCorsHeadersForOrigin(response, origin);
             }
             filterChain.doFilter(request, response);
             return;
         }
+        
+        // Handle pre-flight requests for protected endpoints that didn't have a token
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            if (origin != null && !origin.isBlank()) {
+                setCorsHeadersForOrigin(response, origin);
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                return;
+            }
+        }
 
-        log.warn("Requisição bloqueada - sem service token válido (IP: {})", getClientIp(request));
+        log.warn("Request blocked - no valid user or service token. URI: {}, IP: {}", requestURI, getClientIp(request));
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"Origem não permitida\"}");
+        response.getWriter().write("{\"error\": \"Missing or invalid token\"}");
     }
 
     private boolean isPublicEndpoint(String requestURI) {
@@ -134,7 +127,7 @@ public class OriginValidationFilter extends OncePerRequestFilter {
 
     private boolean hasAuthorizationHeader(HttpServletRequest request) {
         String a = request.getHeader("Authorization");
-        return a != null && !a.isBlank();
+        return a != null && a.startsWith("Bearer ");
     }
 
     private String getClientIp(HttpServletRequest request) {

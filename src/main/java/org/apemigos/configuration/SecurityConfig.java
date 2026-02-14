@@ -75,7 +75,8 @@ public class SecurityConfig {
                 "Access-Control-Request-Method",
                 "Access-Control-Request-Headers",
                 "X-Forwarded-For",
-                "X-Real-IP"
+                "X-Real-IP",
+                "x-service-token"
         ));
 
         configuration.setExposedHeaders(Arrays.asList(

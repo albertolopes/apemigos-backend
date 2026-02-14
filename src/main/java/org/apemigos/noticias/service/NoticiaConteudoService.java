@@ -21,24 +21,28 @@ public class NoticiaConteudoService {
     private final NoticiaRepository noticiaRepository;
     private final NoticiaConteudoMapper noticiaConteudoMapper;
 
+    @Transactional
     public NoticiaConteudoDTO findByNoticiaId(Long noticiaId) {
         NoticiaConteudo conteudo = noticiaConteudoRepository.findByNoticiaId(noticiaId)
                 .orElseThrow(() -> new ObjectNotFoundException("Conteúdo não encontrado para a notícia"));
+        noticiaConteudoRepository.incrementTotalBuscas(conteudo.getId());
         return noticiaConteudoMapper.toDto(conteudo);
     }
 
+    @Transactional
     public NoticiaConteudoDTO findByNoticiaSlug(String slug) {
         NoticiaConteudo conteudo = noticiaConteudoRepository.findByNoticiaSlug(slug)
                 .orElseThrow(() -> new ObjectNotFoundException("Conteúdo não encontrado para a notícia"));
+        noticiaConteudoRepository.incrementTotalBuscas(conteudo.getId());
         return noticiaConteudoMapper.toDto(conteudo);
     }
 
     @Transactional
     public NoticiaConteudoDTO save(NoticiaConteudoDTO conteudoDTO) {
-        Noticia noticia = noticiaRepository.findById(conteudoDTO.getId())
+        Noticia noticia = noticiaRepository.findById(conteudoDTO.getNoticia().getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Notícia não encontrada"));
 
-        noticiaConteudoRepository.findByNoticiaId(conteudoDTO.getId())
+        noticiaConteudoRepository.findByNoticiaId(conteudoDTO.getNoticia().getId())
                 .ifPresent(existing -> {
                     throw new IllegalArgumentException("Já existe conteúdo para esta notícia");
                 });
@@ -47,6 +51,7 @@ public class NoticiaConteudoService {
         conteudo.setNoticia(noticia);
         conteudo.setCreatedAt(LocalDateTime.now());
         conteudo.setUpdatedAt(LocalDateTime.now());
+        conteudo.setTotalBuscas(0);
 
         NoticiaConteudo saved = noticiaConteudoRepository.save(conteudo);
         return noticiaConteudoMapper.toDto(saved);

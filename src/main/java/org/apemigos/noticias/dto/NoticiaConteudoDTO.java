@@ -21,4 +21,6 @@ public class NoticiaConteudoDTO {
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
+
+    private Integer totalBuscas;
 }

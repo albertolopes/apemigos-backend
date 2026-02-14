@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -28,16 +30,19 @@ public class Noticia {
 
     @Column(name = "image", nullable = false)
     private String image;
-    
-    @Column(name = "date", nullable = false)
+
+    @CreationTimestamp
+    @Column(name = "date", nullable = false, updatable = false)
     private LocalDateTime date;
 
     @Column(name = "slug", nullable = false)
     private String slug;
-    
+
+    @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-    
+
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
