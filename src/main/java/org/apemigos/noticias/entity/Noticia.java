@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apemigos.noticias.enums.NoticiaStatus;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -46,4 +47,14 @@ public class Noticia {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private NoticiaStatus status;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.status == null) {
+            this.status = NoticiaStatus.PENDENTE;
+        }
+    }
 }

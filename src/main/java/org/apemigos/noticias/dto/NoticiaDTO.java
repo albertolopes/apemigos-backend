@@ -3,6 +3,7 @@ package org.apemigos.noticias.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apemigos.noticias.enums.NoticiaStatus;
 
 import java.time.LocalDateTime;
 
@@ -30,4 +31,5 @@ public class NoticiaDTO {
     
     private LocalDateTime updatedAt;
 
+    private NoticiaStatus status;
 }

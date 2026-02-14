@@ -11,9 +11,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apemigos.noticias.dto.NoticiaConteudoDTO;
 import org.apemigos.noticias.dto.NoticiaDTO;
+import org.apemigos.noticias.enums.NoticiaStatus;
 import org.apemigos.noticias.service.NoticiaConteudoService;
 import org.apemigos.noticias.service.NoticiaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -160,6 +160,30 @@ public class NoticiaController {
             @Parameter(description = "Dados atualizados da notícia", required = true)
             @RequestBody NoticiaDTO noticiaDetails) {
         return ResponseEntity.ok(noticiaService.update(id, noticiaDetails));
+    }
+
+    @Operation(
+            summary = "Atualizar status da notícia",
+            description = "Atualiza o status de uma notícia. Apenas APROVADO e PENDENTE são permitidos."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Status atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = NoticiaDTO.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Notícia não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Status inválido ou não permitido"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<NoticiaDTO> updateNoticiaStatus(
+            @Parameter(description = "ID da notícia", required = true, example = "1")
+            @PathVariable Long id,
+            @Parameter(description = "Novo status da notícia", required = true)
+            @RequestBody NoticiaStatus status) {
+
+        return ResponseEntity.ok(noticiaService.updateStatus(id, status));
     }
 
     @Operation(
