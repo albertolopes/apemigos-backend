@@ -1,0 +1,1 @@
+ALTER TABLE associado ADD COLUMN status_carteirinha VARCHAR(20) NOT NULL DEFAULT 'SOLICITADA';

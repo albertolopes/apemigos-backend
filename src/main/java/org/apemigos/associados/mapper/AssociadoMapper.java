@@ -1,6 +1,7 @@
 package org.apemigos.associados.mapper;
 
 import org.apemigos.associados.dto.AssociadoRequisicaoDTO;
+import org.apemigos.associados.dto.AssociadoResponseDTO;
 import org.apemigos.associados.entity.Associado;
 import org.apemigos.util.mapper.BaseMapper;
 import org.mapstruct.Mapper;
@@ -41,4 +42,6 @@ public abstract class AssociadoMapper implements BaseMapper<Associado, Associado
         associado.setPossuiConvenio(dto.getConvenioNome() != null && !dto.getConvenioNome().isBlank());
         return associado;
     }
+
+    public abstract AssociadoResponseDTO toResponseDto(Associado entity);
 }

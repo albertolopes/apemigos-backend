@@ -1,28 +1,20 @@
-package org.apemigos.associados.entity;
+package org.apemigos.associados.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apemigos.associados.enums.StatusCarteirinha;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
+@Data
 @Builder
-@Entity
-@Table(name = "associado")
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Associado {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AssociadoResponseDTO {
     private Long id;
-
     private String nome;
     private String sobrenome;
     private LocalDate dataNascimento;
@@ -36,32 +28,13 @@ public class Associado {
     private String telefoneMedico;
     private Boolean possuiConvenio;
     private String convenioNome;
-
     private String cidade;
     private String estado;
     private String bairro;
     private String logradouro;
     private String complemento;
     private String cep;
-
-    @Column(columnDefinition = "TEXT")
     private String observacoes;
-
-    @Column(name = "created_at", updatable = false)
-    @CreationTimestamp
     private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "associado", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<AssociadoFile> files = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status_carteirinha", nullable = false)
     private StatusCarteirinha statusCarteirinha;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.statusCarteirinha == null) {
-            this.statusCarteirinha = StatusCarteirinha.SOLICITADA;
-        }
-    }
 }
