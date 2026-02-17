@@ -49,8 +49,8 @@ public class AuthController {
 
     @PostMapping("/refresh")
     @Operation(summary = "Refresh token", description = "Renova um token JWT expirado")
-    public ResponseEntity<String> refreshToken(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok("Refresh token endpoint");
+    public ResponseEntity<JwtResponse> refreshToken(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(authService.refreshToken(token));
     }
 
     @GetMapping("/health")

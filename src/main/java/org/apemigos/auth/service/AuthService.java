@@ -1,5 +1,6 @@
 package org.apemigos.auth.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apemigos.auth.dto.JwtResponse;
@@ -36,6 +37,32 @@ public class AuthService {
 
         // Autenticação de usuário
         return authenticateUser(request);
+    }
+
+    public JwtResponse refreshToken(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Token inválido ou ausente");
+        }
+
+        String token = authHeader.substring(7);
+        Claims claims = jwtUtil.extractClaimsFromExpiredToken(token);
+
+        Boolean isService = claims.get("isService", Boolean.class);
+        if (Boolean.TRUE.equals(isService)) {
+            String newToken = jwtUtil.generateSecureServiceToken();
+            return JwtResponse.forService(newToken, "service@apemigos.org", "Service Account");
+        } else {
+            Long userId = claims.get("id", Long.class);
+            Usuario user = userRepository.findById(userId)
+                    .orElseThrow(() -> new SecurityException("Usuário não encontrado"));
+
+            if (!user.getIsActive()) {
+                throw new SecurityException("Usuário inativo");
+            }
+
+            String newToken = jwtUtil.generateSecureUserToken(user);
+            return new JwtResponse(newToken, user);
+        }
     }
 
     private JwtResponse authenticateService(String serviceKey) {

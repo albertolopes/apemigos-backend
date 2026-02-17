@@ -215,6 +215,24 @@ public class JwtUtil {
     }
 
     /**
+     * Extrai claims de um token expirado (para refresh)
+     */
+    public Claims extractClaimsFromExpiredToken(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSecureSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        } catch (Exception e) {
+            log.warn("Erro ao extrair claims de token expirado: {}", e.getMessage());
+            throw new SecurityException("Token inválido");
+        }
+    }
+
+    /**
      * Extrai o email do token
      */
     public String getEmailFromToken(String token) {
