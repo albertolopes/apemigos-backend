@@ -37,7 +37,7 @@ public class AssociadoController {
 
     @Operation(
             summary = "Listar associados",
-            description = "Retorna uma lista paginada de associados com filtro opcional por palavra-chave"
+            description = "Retorna uma lista paginada de associados com filtro opcional por palavra-chave e status"
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Associados listados com sucesso"),
@@ -48,6 +48,9 @@ public class AssociadoController {
             @Parameter(in = ParameterIn.QUERY, description = "Palavra-chave para busca (nome, sobrenome, cpf, email, cidade)", required = false,
                     schema = @Schema(type = "string", nullable = true))
             @RequestParam(name = "keyword", required = false) String keyword,
+            @Parameter(in = ParameterIn.QUERY, description = "Filtro por status da carteirinha", required = false,
+                    schema = @Schema(implementation = StatusCarteirinha.class, nullable = true))
+            @RequestParam(name = "status", required = false) StatusCarteirinha status,
             @Parameter(description = "Número da página (0-based)", example = "0")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Quantidade de itens por página", example = "10")
@@ -55,7 +58,7 @@ public class AssociadoController {
     ) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return ResponseEntity.ok(associadoService.findAll(keyword, pageable));
+        return ResponseEntity.ok(associadoService.findAll(status, keyword, pageable));
     }
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

@@ -34,7 +34,7 @@ public class AssociadoService {
     private final AssociadoFileRepository associadoFileRepository;
     private final CloudinaryService cloudinaryService;
     private final AssociadoMapper associadoMapper;
-    private final AssociadoFileMapper associadoFileMapper; // Inject the new mapper
+    private final AssociadoFileMapper associadoFileMapper;
     private final EmailService emailService;
 
     private static final String CLOUD_FOLDER = "associados";
@@ -99,13 +99,13 @@ public class AssociadoService {
         return associadoSalvo;
     }
 
-    public Page<AssociadoResponseDTO> findAll(String keyword, Pageable pageable) {
+    public Page<AssociadoResponseDTO> findAll(StatusCarteirinha status, String keyword, Pageable pageable) {
         String searchTerm = keyword;
         if (keyword == null || keyword.isBlank() || "null".equalsIgnoreCase(keyword) || "undefined".equalsIgnoreCase(keyword)) {
             searchTerm = null;
         }
 
-        Page<Associado> associados = associadoRepository.findByKeyword(searchTerm, pageable);
+        Page<Associado> associados = associadoRepository.findByFilters(status, searchTerm, pageable);
         return associados.map(associadoMapper::toResponseDto);
     }
 

@@ -4,7 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -28,21 +30,24 @@ public class AssociadoRequisicaoDTO {
     @Schema(description = "Data de nascimento (YYYY-MM-DD)", example = "1980-07-15")
     private LocalDate dataNascimento;
 
+    @CPF
     @NotBlank
     @Schema(description = "CPF", example = "52998224725")
     private String cpf;
 
-    @Schema(description = "RG", example = "12.345.678-9")
+    @Schema(description = "RG", example = "123456789")
     private String rg;
 
     @Email
     @Schema(description = "Email", example = "maria@example.com")
     private String email;
 
-    @Schema(description = "Telefone de contato", example = "(61) 99999-9999")
+    @Schema(description = "Telefone de contato", example = "61999999999")
+    @Pattern(regexp = "\\d+", message = "O telefone deve conter apenas números")
     private String telefoneContato;
 
-    @Schema(description = "Telefone de emergência", example = "(61) 98888-8888")
+    @Schema(description = "Telefone de emergência", example = "61988888888")
+    @Pattern(regexp = "\\d+", message = "O telefone de emergência deve conter apenas números")
     private String telefoneEmergencia;
 
     @Schema(description = "Nome do contato de emergência", example = "João Silva")
