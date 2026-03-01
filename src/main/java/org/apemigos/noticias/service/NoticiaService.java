@@ -65,8 +65,8 @@ public class NoticiaService {
                 .replaceAll("[^a-z0-9\\s]", "")
                 .replaceAll("\\s+", "-");
 
-        if (slug.length() > 10)
-            slug = slug.substring(0, 10);
+        if (slug.length() > 50)
+            slug = slug.substring(0, 50);
 
         noticia.setSlug(slug.replaceAll("-$", ""));
 
