@@ -16,6 +16,9 @@ public interface NoticiaConteudoRepository extends JpaRepository<NoticiaConteudo
     
     @Query("SELECT nc FROM NoticiaConteudo nc WHERE nc.noticia.slug = :slug")
     Optional<NoticiaConteudo> findByNoticiaSlug(@Param("slug") String slug);
+
+    @Query("SELECT COALESCE(nc.totalBuscas, 0) FROM NoticiaConteudo nc WHERE nc.noticia.id = :noticiaId")
+    Optional<Integer> findTotalBuscasByNoticiaId(@Param("noticiaId") Long noticiaId);
     
     boolean existsByNoticiaId(Long noticiaId);
     

@@ -226,6 +226,26 @@ public class NoticiaController {
     }
 
     @Operation(
+            summary = "Buscar total de buscas por ID da notícia",
+            description = "Retorna apenas o número total de buscas do conteúdo de uma notícia específica"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Total de buscas encontrado",
+                    content = @Content(schema = @Schema(implementation = Integer.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Conteúdo não encontrado para a notícia"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/conteudo/{noticiaId}/total-buscas")
+    public ResponseEntity<Integer> getTotalBuscasByNoticiaId(
+            @Parameter(description = "ID da notícia", required = true, example = "1")
+            @PathVariable Long noticiaId) {
+        return ResponseEntity.ok(noticiaConteudoService.findTotalBuscasByNoticiaId(noticiaId));
+    }
+
+    @Operation(
             summary = "Buscar conteúdo por slug da notícia",
             description = "Retorna o conteúdo completo de uma notícia específica pelo slug (URL amigável) da notícia"
     )

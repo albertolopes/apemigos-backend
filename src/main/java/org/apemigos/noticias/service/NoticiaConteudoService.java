@@ -37,6 +37,11 @@ public class NoticiaConteudoService {
         return noticiaConteudoMapper.toDto(conteudo);
     }
 
+    public Integer findTotalBuscasByNoticiaId(Long noticiaId) {
+        return noticiaConteudoRepository.findTotalBuscasByNoticiaId(noticiaId)
+                .orElseThrow(() -> new ObjectNotFoundException("Conteúdo não encontrado para a notícia"));
+    }
+
     @Transactional
     public NoticiaConteudoDTO save(NoticiaConteudoDTO conteudoDTO) {
         Noticia noticia = noticiaRepository.findById(conteudoDTO.getNoticia().getId())
